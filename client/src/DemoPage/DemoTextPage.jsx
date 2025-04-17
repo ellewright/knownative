@@ -71,7 +71,6 @@ export default function DemoTextPage() {
   };
 
   const handleWelcomeModalSubmit = () => {
-    //setDemoWelcomeModalData(data);
     handleCloseDemoWelcomeModal();
   };
 
@@ -81,8 +80,13 @@ export default function DemoTextPage() {
 
   // --- Text Selection Side Effects---
   useEffect(() => {
-    setText(demoTexts[textSelection]);
-    localStorage.setItem('text', JSON.stringify(demoTexts[textSelection]));
+    if (textSelection === "imported") {
+      setText(JSON.parse(localStorage.getItem("text")));
+      localStorage.setItem('text', localStorage.getItem("text"));
+    } else {
+      setText(demoTexts[textSelection]); // HERE!!!!!
+      localStorage.setItem('text', JSON.stringify(demoTexts[textSelection]));
+    }
 
     localStorage.setItem('textSelection', textSelection);
   }, [textSelection]);

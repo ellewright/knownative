@@ -6,6 +6,13 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
   const focusInputRef = useRef(null);
   const [pageCount, setPageCount] = useState(1);
 
+  const [importedTextData, setImportedTextData] = useState({
+    id: 4,
+    title: "",
+    content: "",
+    source: ""
+  });
+
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
@@ -14,8 +21,21 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
     }
   }, [isOpen]);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setImportedTextData({
+      ...importedTextData,
+      [name]: value
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (textSelection === "imported") {
+      localStorage.setItem("text", JSON.stringify(importedTextData));
+    };
+
     onSubmit(textSelection);
   };
 
@@ -54,8 +74,8 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
               <div className="progress-dashes dashes-active"></div>
               <div className="progress-dashes dashes-inactive"></div>
             </div>
-            <h1 className="welcome-modal">Choose your level</h1>
-            <p>How would you describe your proficiency in Mandarin?</p>
+            <h1 className="welcome-modal">Choose your text</h1>
+            <p>Select a text based on proficiency, or import your own.</p>
             <form>
               <label className="welcome-modal" htmlFor="beginnerRadioButton">
                 <div
@@ -98,7 +118,6 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
                   </p>
                 </div>
               </label>
-
               <label className="welcome-modal" htmlFor="advancedRadioButton">
                 <div
                   className={`radio-div advanced-div
@@ -119,6 +138,21 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
                   </p>
                 </div>
               </label>
+              <label className="welcome-modal" htmlFor="importedTextRadioButton">
+                <div
+                  className={`radio-div imported-div
+                   ${textSelection === 'imported' ? 'active-radio-div' : ''}`}>
+                  <input
+                    className="welcome-modal"
+                    type="radio"
+                    value="imported"
+                    id="importedTextRadioButton"
+                    checked={textSelection === "imported"}
+                    onChange={onRadioChange}
+                  />
+                  <h3>Import Text</h3>
+                </div>
+              </label>
             </form>
           </div>
         ) : (
@@ -126,7 +160,7 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
         )}
 
         {/* Modal Page 3 */}
-        {pageCount === 3 ? (
+        {pageCount === 3 && textSelection !== "imported" ? (
           <div className="page-three">
             <div className="progress-div">
               <div className="progress-dashes dashes-active"></div>
@@ -146,6 +180,38 @@ const DemoWelcomeModal = ({ onSubmit, isOpen, onClose, textSelection, setTextSel
               toolbar.
             </p>
           </div>
+        ) : pageCount === 3 ? (
+          // import text form
+          <form>
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Enter a title for the text..."
+              value={importedTextData.title}
+              onChange={handleChange}
+              required
+            />
+            <label htmlFor="source">Source</label>
+            <input
+              type="text"
+              id="source"
+              name="source"
+              placeholder="Enter the URL of the text..."
+              value={importedTextData.source}
+              onChange={handleChange}
+            />
+            <label htmlFor="content">Content</label>
+            <textarea
+              id="content"
+              name="content"
+              placeholder="Paste in a text you would like to read..."
+              value={importedTextData.content}
+              onChange={handleChange}
+              required
+            />
+          </form>
         ) : (
           ''
         )}

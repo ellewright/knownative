@@ -6,7 +6,10 @@ import './DemoDifficultyTag.css';
 const DemoDifficultyTag = ({ textSelection }) => {
   return (
     <>
-      <span className={`demo-difficulty-tag-${textSelection}`}>
+      {
+        // TODO: add better option for "imported" texts instead of defaulting to "beginner"
+      }
+      <span className={`demo-difficulty-tag-${textSelection !== "imported" ? textSelection : "beginner"}`}>
         <HiChartBar /> {`${textSelection[0].toUpperCase() + textSelection.slice(1)}`}{' '}
       </span>
     </>
